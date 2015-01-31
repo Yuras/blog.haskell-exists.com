@@ -1,0 +1,6 @@
+*~
+.*.swp
+dist/
+_cache/
+_site/
+deploy.sh

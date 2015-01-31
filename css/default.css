@@ -1,0 +1,50 @@
+
+body {
+	color: #444444;
+	width: 640px;
+	margin: 0px auto 0px auto;
+	font-size: 16px;
+	font-family: 'Helvetica';
+	line-height: 1.6;
+}
+
+div#header {
+	border-bottom: 2px solid black;
+	margin-bottom: 30px;
+	padding: 12px 0px 12px 0px;
+}
+
+div#footer {
+	border-top: solid 2px black;
+	color: #555;
+	font-size: 12px;
+	margin-top: 30px;
+	padding: 12px 0px 12px 0px;
+	text-align: right;
+}
+
+div.info {
+	color: #555;
+	font-size: 14px;
+	font-style: italic;
+}
+
+ul.posts li {
+	list-style-type: none;
+	padding: 10px;
+}
+
+blockquote {
+	border-left: solid 1px black;
+	padding-left: 10px;
+	color: #555;
+	font-family: monospace;
+}
+
+code {
+	background: #eeeeee;
+}
+
+pre.sourceCode {
+	background: #eeeeee;
+}
