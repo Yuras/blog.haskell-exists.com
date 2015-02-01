@@ -17,8 +17,11 @@ main = hakyll $ do
 
     match "*.markdown" $ do
         route   $ setExtension "html"
+        let theCtx =
+                constField "nocomments" "yes"            `mappend`
+                defaultContext
         compile $ pandocCompiler
-            >>= loadAndApplyTemplate "templates/default.html" defaultContext
+            >>= loadAndApplyTemplate "templates/default.html" theCtx
             >>= relativizeUrls
 
     match "posts/*" $ do
@@ -35,6 +38,7 @@ main = hakyll $ do
             let archiveCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Archives"            `mappend`
+                    constField "nocomments" "yes"            `mappend`
                     defaultContext
 
             makeItem ""
@@ -50,6 +54,7 @@ main = hakyll $ do
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
                     constField "title" "Haskell Exists"      `mappend`
+                    constField "nocomments" "yes"            `mappend`
                     defaultContext
 
             getResourceBody
@@ -66,5 +71,4 @@ postCtx =
     dateField "date" "%B %e, %Y" `mappend`
     constField "author" "Yuras Shumovich" `mappend`
     constField "email" "shumovichy@gmail.com" `mappend`
-    constField "comments" "yes" `mappend`
     defaultContext
