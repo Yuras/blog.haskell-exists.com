@@ -49,7 +49,7 @@ main = hakyll $ do
             posts <- recentFirst =<< loadAll "posts/*"
             let indexCtx =
                     listField "posts" postCtx (return posts) `mappend`
-                    constField "title" "Home"                `mappend`
+                    constField "title" "Haskell Exists"      `mappend`
                     defaultContext
 
             getResourceBody
@@ -66,4 +66,5 @@ postCtx =
     dateField "date" "%B %e, %Y" `mappend`
     constField "author" "Yuras Shumovich" `mappend`
     constField "email" "shumovichy@gmail.com" `mappend`
+    constField "comments" "yes" `mappend`
     defaultContext
