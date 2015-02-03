@@ -11,13 +11,13 @@ a number of issues.
 - It can mess with haskell code.
 
 CPP doesn't understand Haskell code, instead it assumes C code. It is free to
-remove insignificant (for C, not for Haskell) whitespaces, expand macros in
-Haskell comments and strings, mess with identifiers that contain `'` or `#`.
+remove insignificant (for C, not for Haskell) whitespace, expand macros in
+Haskell comments and strings or mess with identifiers that contain `'` or `#`.
 
 - It leads to [unnecessary recompilation](http://stackoverflow.com/questions/26785036/why-the-presence-absence-of-the-hscolour-binary-forces-to-recompile-the-quickche).
 
 Every time you change your .cabal file, e.g. add new module, or update
-dependencies, cabal regenerates `cabal-macros.h` file. Then recompilation
+dependencies, cabal regenerates `cabal-macros.h` file. Then the recompilation
 checker pessimistically decides to recompile all modules with CPP enabled.
 
 - It makes automatic code analyzing and transforming harder.
@@ -31,26 +31,26 @@ behaviour for different platforms of library versions. Sometimes that is
 unavoidable though.
 
 Most of the time CPP can be avoided or minimized. The most important tool here
-it abstraction.
+is abstraction.
 
 ## Abstract over specific details ##
 
 It is not Haskell specific, abstracting is widely used to minimize CPP in C.
-When you need different behaviour based on current platform or version of some
+When you need different behaviour based on the current platform or the version of some
 dependencies, try to abstract over the difference instead of inlining platform
 specific code.
 
 At the first glance it may look impossible to do. In such cased I usually
 simply duplicate code and then refactor it to reduce duplication.
 
-Some times it is convenient to start with umbrella module that provides unified
+Some times it is convenient to start with an umbrella module that provides a unified
 interface for the rest of program, and a number of platform specific
-implementations. Note: you don't need CPP to select specific module, cabal let
-you conditionally include modules based on platform or other conditions.
+implementations. Note: you don't need CPP to select a specific module, cabal lets
+you conditionally include modules based on the platform or other conditions.
 
 ## Example: fsnotify ##
 
-Excellent example of such approach is [fsnotify](https://github.com/haskell-fswatch/hfsnotify)
+An excellent example of such an approach is the [fsnotify](https://github.com/haskell-fswatch/hfsnotify)
 package. It defines specific implementations for
 [linux](https://github.com/haskell-fswatch/hfsnotify/blob/master/src/System/FSNotify/Linux.hs),
 [osx](https://github.com/haskell-fswatch/hfsnotify/blob/master/src/System/FSNotify/OSX.hs) and
@@ -60,7 +60,7 @@ A number of [other modules](https://github.com/haskell-fswatch/hfsnotify/tree/ma
 contain common code, so duplication is really minimal.
 
 Note that CPP is enabled only in the umbrella module for two reasons. First off all, it is used to import
-specific implementation:
+the specific implementation:
 
 ```haskell
 #ifdef OS_Linux
@@ -80,9 +80,9 @@ type NativeManager = PollManager
 
 That can be avoided too. To do that we can give the same name to platform
 specific modules but move them into separate directories, `linux`, `osx` and
-`win32`. Then manipulate `hs-source-dirs` field in cabal file to select correct
+`win32`. Then manipulate the `hs-source-dirs` field in cabal file to select the correct
 implementation. (Make sure to add other implementations to `extra-source-files`
-to make sure `cabal sdist` will copy them into tarball.)
+to make sure `cabal sdist` will copy them into the tarball.)
 
 ```haskell
 -- in System.FSNotify:
@@ -113,10 +113,10 @@ forkFinally action and_then =
 ```
 
 The same technique can be used to avoid CPP here. I personally prefer to hide
-such snippets into [custom prelude](https://github.com/Yuras/pdf-toolbox/blob/0732f15e8f73a724372d46670fa2d0d71d301650/core/lib/Prelude.hs)
+such snippets into a [custom prelude](https://github.com/Yuras/pdf-toolbox/blob/0732f15e8f73a724372d46670fa2d0d71d301650/core/lib/Prelude.hs)
 and don't bother with `hs-source-path`.
 
 (I don't think CPP should be avoided at all costs, I think that the amount of
-CPP used in fsnotify is a good compromise. I just used it as a realworld
-example how to avoid CPP.)
+CPP used in fsnotify is a good compromise. I just used it as a real world
+example of how to avoid CPP.)
 
