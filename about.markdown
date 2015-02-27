@@ -7,3 +7,5 @@ title: About
 [GitHub](https://github.com/Yuras)
 
 [StackOverflow](http://stackoverflow.com/users/492865/yuras)
+
+[Twitter](https://twitter.com/shumovichy)
