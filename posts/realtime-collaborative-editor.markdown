@@ -192,16 +192,27 @@ But if they overlap, we should be careful not to delete more then necessary.
 transform (Delete from1 count1) (Delete from2 count2)
   | from2 >= from1 + count1
   = (Delete from1 count1, Delete (from2 - count1) count2)
+
   | from1 >= from2 + count2
   = (Delete (from1 - count2) count1, Delete from2 count2)
+
+  | from1 >= from2 && from1 + count1 <= from2 + count2
+  = (Delete from2 0, Delete from2 (count2 - count1))
+
+  | from2 >= from1 && from2 + count2 <= from1 + count1
+  = (Delete from1 (count1 - count2), Delete from1 0)
+
   | from1 >= from2
-  = let d = from1 - from2
+  = let d = from2 + count2 - from1
     in (Delete from2 (count1 - d), Delete from2 (count2 - d))
+
   | otherwise
-  = let d = from2 - from1
+  = let d = from1 + count1 - from2
     in (Delete from1 (count1 - d), Delete from1 (count2 - d))
 ```
 
+The first two guards handle the case of not overlapping edits. The second two --
+when one covers another. The last two -- partially overlapping edits.
 The mixed case, when we transform insert and delete operations, is analogous:
 
 ```haskell
@@ -263,7 +274,7 @@ $$ (b^\prime c^\prime, p^\prime) = T(b c, p) $$
 Server broadcasts $p^\prime$ to all clients (we assume order-preserving channel), applies it to $S$,
 increments revision $n$ and appends $p^\prime$ to $s$:
 
-$$ (S, n, s) \Rightarrow (p^\prime(S), n + 1, (s, p^\prime) \label{server}\tag{SERVER}$$
+$$ (S, n, s) \Rightarrow (p^\prime(S), n + 1, (s, p^\prime)) \label{server}\tag{SERVER}$$
 
 Client side is a bit more involved. Each client maintains a state, a tuple of 5 elements: the last
 known server document state $S$, the last known server revision $n$, the operation it is trying
@@ -275,7 +286,7 @@ All the local operations before the acknowledgment are buffered in $b$, then cli
 More formally, when local change is received, it is applied to the local document $C$ and combined
 with buffered operation $b$:
 
-$$ (S, n, a, b, C) \Rightarrow (S, n, a, b p, p(C) \label{local}\tag{LOCAL}$$
+$$ (S, n, a, b, C) \Rightarrow (S, n, a, b p, p(C)) \label{local}\tag{LOCAL}$$
 
 When remote change $p$ is received form server (it is the operation $p^\prime$ broadcasted by $(\ref{server})$ rule),
 and $p$ is not equivalent to $a$, client applies it to $S$ to get new server document state and increments $n$.
