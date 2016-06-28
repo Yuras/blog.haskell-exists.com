@@ -244,7 +244,7 @@ hFlushFailing :: Handle -> IO ()
 hFlushFailing _ = error "hFlush failed"
 ```
 
-We replaces `hFlush` with it's failing variant. Note: `hPutStr` uses the
+We replace `hFlush` with it's failing variant. Note: `hPutStr` uses the
 initial version still. The example is the same:
 
 ```haskell
